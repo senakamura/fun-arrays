@@ -7,10 +7,23 @@ var dataset = require('./dataset.json');
 */
 var hundredThousandairs = null;
 
+// dataset.bankBalances.forEach(function(account){
+//   var moneez = Number(account.amount);
+//   console.log(moneez);
+//   if (moneez > 100000){
+//     console.log("yes!");
+//   }
+//   console.log('no');
+// });
+
+hundredThousandairs = dataset.bankBalances.filter(function(bank){
+  return parseInt(bank.amount) > 100000;
+});
+
 /*
   set a new key for each object in bankBalances named `rounded`
   the value of this key will be the `amount` rounded to the nearest dollar
-  example 
+  example
     {
       "amount": "134758.44",
       "state": "HI",
@@ -18,19 +31,34 @@ var hundredThousandairs = null;
     }
   assign the resulting array to `roundedDollar`
 */
-var roundedDollar = null;
+var roundedDollar = dataset.bankBalances.map(function(account){
+  account.rounded = Math.round(Number(account.amount));
+  return account;
+  // return {
+  //   "amount": account.amount,
+  //   "state": account.state,
+  //   "rounded": Math.round(Number(account.amount))
+  // };
+});
 
 /*
   set a the `amount` value for each object in bankBalances
   to the value of `amount` rounded to the nearest 10 cents
-  example 
+  example
     {
       "amount": 134758.4,
       "state": "HI"
     }
   assign the resulting array to `roundedDime`
 */
-var roundedDime = null;
+var roundedDime = dataset.bankBalances.map(function(account){
+  // account.amount = Math.max(Math.round(account.amount *10)/10, 5);
+  // console.log(account);
+  return {
+    "amount": Math.max(Math.round(account.amount *10)/10, 5),
+    "state": account.state
+  };
+});
 
 // set sumOfBankBalances to the sum of all amounts in bankBalances
 var sumOfBankBalances = null;
@@ -77,14 +105,14 @@ var stateSums = null;
 
 /*
   set lowerSumStates to an array containing
-  only the two letter state abbreviation of each state 
+  only the two letter state abbreviation of each state
   where the sum of amounts in the state is
     less than 1,000,000
  */
 var lowerSumStates = null;
 
 /*
-  set higherStateSums to be the sum of 
+  set higherStateSums to be the sum of
     all amounts of every state
     where the sum of amounts in the state is
       greater than 1,000,000
