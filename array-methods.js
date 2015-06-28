@@ -32,13 +32,13 @@ hundredThousandairs = dataset.bankBalances.filter(function(bank){
   assign the resulting array to `roundedDollar`
 */
 var roundedDollar = dataset.bankBalances.map(function(account){
-  account.rounded = Math.round(Number(account.amount));
-  return account;
-  // return {
-  //   "amount": account.amount,
-  //   "state": account.state,
-  //   "rounded": Math.round(Number(account.amount))
-  // };
+  // account.rounded = Math.round(Number(account.amount));
+  // return account;
+  return {
+    "amount": account.amount,
+    "state": account.state,
+    "rounded": Math.round(Number(account.amount))
+  };
 });
 
 /*
@@ -61,7 +61,12 @@ var roundedDime = dataset.bankBalances.map(function(account){
 });
 
 // set sumOfBankBalances to the sum of all amounts in bankBalances
-var sumOfBankBalances = null;
+var sumOfBankBalances = dataset.bankBalances.reduce(function(prev, account){
+  // console.log(prev + Number(account.amount));
+  return prev + Number(account.amount);
+}, 0);
+
+sumOfBankBalances = Number(Number(sumOfBankBalances).toFixed(2));
 
 /*
   set sumOfInterests to the sum of the 18.9% interest
@@ -75,7 +80,21 @@ var sumOfBankBalances = null;
     Delaware
   the result should be rounded to the nearest cent
  */
-var sumOfInterests = null;
+var sumOfInterests = dataset.bankBalances.filter(function(account){
+  var states = ["WI", "IL", "WY", "OH", "GA", "DE"];
+  if(states.indexOf(account.state)>-1){
+    return true;
+  }
+});
+
+sumOfInterests = sumOfInterests.reduce(function(prev, account){
+  // console.log(account.amount);
+  return prev + Number(account.amount)*0.189;
+},0);
+
+sumOfInterests = Number(Number(sumOfInterests).toFixed(2));
+
+
 
 /*
   set sumOfHighInterests to the sum of the 18.9% interest
@@ -91,7 +110,18 @@ var sumOfInterests = null;
     Delaware
   the result should be rounded to the nearest cent
  */
-var sumOfHighInterests = null;
+var sumOfHighInterests = dataset.bankBalances.filter(function(account){
+  var states = ["WI", "IL", "WY", "OH", "GA", "DE"];
+  if(states.indexOf(account.state) < 0 && Number(account.amount) > 50000){
+    return true;
+  }
+});
+
+sumOfHighInterests = sumOfHighInterests.reduce(function(prev, account){
+  return prev + Number(account.amount)*0.189;
+}, 0);
+
+sumOfHighInterests = Number(Number(sumOfHighInterests).toFixed(2));
 
 /*
   aggregate the sum of bankBalance amounts
@@ -101,7 +131,18 @@ var sumOfHighInterests = null;
     and the value is the sum of all amounts from that state
       the value must be rounded to the nearest cent
  */
-var stateSums = null;
+var stateSums = dataset.bankBalances.reduce(function (prev, curr){
+  if(!prev[curr.state]){
+    prev[curr.state] = 0;
+  }
+
+  prev[curr.state] += Number(Number(curr.amount).toFixed(2));
+  prev[curr.state] = Number(prev[curr.state].toFixed(2));
+  // console.log(curr);
+  console.log(prev);
+  return prev;
+}, {});
+
 
 /*
   set lowerSumStates to an array containing
